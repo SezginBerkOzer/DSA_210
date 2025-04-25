@@ -14,7 +14,7 @@ This project analyzes how **performance metrics, age, injuries, and club value**
 
 ##  Hypotheses
 
-1. 📉More injuries → lower market value  
+1.  More injuries → lower market value  
 2.  Younger players → higher market value  
 3.  Players from high-value clubs → overvalued
 
