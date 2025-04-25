@@ -1,110 +1,125 @@
 
-#  DSA210 Term Project – Transfer Market Value Prediction
+#  DSA210 Project – Transfer Market Value Prediction
 
-I am a student from Sabancı University, **Sezgin Berk Özer**, and this is my DSA210 term project.  
-The aim of this project is to analyze how **performance metrics, age, injuries, and club-related features** impact the **market value of professional football players**, and to develop a machine learning model that predicts transfer fees.
-
----
-
-#  Contents
-- [Motivation](#motivation)
-- [Project Goal](#project-goal)
-- [Data Sources and Preprocessing](#data-sources-and-preprocessing)
-- [Data Analysis](#data-analysis)
-  - [EDA](#exploratory-data-analysis)
-  - [Hypothesis Testing](#hypothesis-testing)
-  - [Modeling](#machine-learning-modeling)
-- [Findings](#findings)
-- [Limitations and Future Work](#limitations-and-future-work)
+##  Author: Sezgin Berk Özer – Sabancı University  
+##  Term Project – Spring 2024/2025
 
 ---
 
-##  Motivation
+###  Project Objective
 
-Player transfers in football involve multi-million euro decisions. Traditional valuation relies heavily on subjective judgment, club prestige, and incomplete performance stats. This project aims to **objectively evaluate how key metrics—such as age, injuries, and rating—impact player market value**, using historical data and data science techniques.
-
----
-
-##  Project Goal
-
-- Understand the impact of **FIFA-based skill ratings, age, injury duration, and player position** on market value.
-- Build a **regression model** that can predict transfer value based on player attributes.
-- Explore whether players from top clubs are **overvalued** compared to equally skilled players in smaller clubs.
+This project analyzes how **performance metrics, age, injuries, and club value** impact the **transfer market value of professional football players**. Using data from **Transfermarkt**, **FBref**, and **FIFA ratings**, the project explores whether clubs overvalue or undervalue players based on non-performance factors.
 
 ---
 
-##  Data Sources and Preprocessing
+##  Hypotheses
 
-###  Dataset Summary
-
-| File Name             | Description |
-|----------------------|-------------|
-| `players.csv`         | Player demographic data (name, date of birth, position) |
-| `transfers.csv`       | Historical transfer records and fees |
-| `player_valuations.csv` | Market value time series |
-| `appearances.csv`     | Performance stats (goals, assists, minutes) |
-| `dataset.csv`         | Injury history (days injured per season) |
-| `player_stats.csv`    | FIFA player attributes (dribbling, vision, shooting...) |
-| `clubs.csv`           | Club IDs and names |
-
-Raw `.csv` data was preprocessed using `pandas`, merged on player names and cleaned. Missing values were dropped or imputed logically (e.g., missing injury duration = 0).
+1. 📉More injuries → lower market value  
+2.  Younger players → higher market value  
+3.  Players from high-value clubs → overvalued
 
 ---
 
-##  Data Analysis
+##  Data Sources
 
-###  Exploratory Data Analysis
-
-- **Scatter Plot**: Custom FIFA rating vs Transfer Fee
-- **Bar Chart**: Effect of injury (30+ days) on average market value
-- **Correlation Heatmap**: Check strength of relationships between rating, age, injury, and market value
-
-###  Hypothesis Testing
-
-- **Injury Impact**: Do injured players have significantly lower transfer fees?
-- **Age Impact**: Are younger players more expensive?
-  - **p-values** were used to test significance at α = 0.05
-  - Result: No significant difference found for injuries or age in current dataset
+| Source            | Description                            |
+|-------------------|----------------------------------------|
+| `transfers.csv`   | Player transfer history & fees         |
+| `players.csv`     | Demographic data (age, position)       |
+| `player_stats.csv`| FIFA attributes → custom performance rating |
+| `dataset.csv`     | Injury days per season                 |
+| `clubs.csv`       | Club-level matching data               |
 
 ---
 
-##  Machine Learning Modeling
+##  Exploratory Data Analysis (EDA)
 
-- **Model Used**: Linear Regression
-- **Features**: `custom_rating`, `age`, `position` (one-hot encoded)
-- **Target**: `transfer_fee`
-- **Performance**:
-  - R² Score: 0.032
-  - RMSE: €6.59 million
+### 1. FIFA Rating vs Transfer Fee
 
-While basic, the model demonstrates how FIFA-based metrics and player demographics affect transfer value. Further improvements are discussed below.
+![FIFA Rating vs Transfer Fee](rating_vs_transfer_fee.png)
+
+> A positive correlation is visible – higher rating generally means higher transfer fee.
 
 ---
 
-##  Findings
+### 2. Age vs Transfer Fee
 
-- **FIFA custom rating** has a **positive correlation** with transfer value.
-- **Injury and age** effects were **not statistically significant** in the current sample.
-- **Position encoding** slightly improved the regression model.
+![Age vs Transfer Fee](age_vs_transfer_fee.png)
 
----
-
-##  Limitations and Future Work
-
-### Limitations
-
-- **Missing or inconsistent data** across datasets (e.g., injury durations, club valuations).
-- **Transfer fees** vary due to club negotiations, agent effects, or media hype—not captured here.
-- Only basic linear models used—**non-linear effects are likely**.
-
-### Future Work
-
-- Add **club market value**, **league tier**, and **contract duration**
-- Use **Random Forest/XGBoost** for better modeling
-- Apply **log transformation** to reduce impact of extreme fees
-- Conduct **clustering** or **classification** to group player types
+> Players under 25 show slightly higher fees, but trend is not strong.
 
 ---
 
-**Thank you for reading!** Full code and analysis notebooks are available in this repository.
+### 3. Injury Days vs Transfer Fee
 
+![Injury vs Transfer Fee](injury_vs_transfer_fee.png)
+
+> More than 30+ injury days appears to lower transfer value significantly.
+
+---
+
+### 4. Correlation Heatmap
+
+![Correlation Matrix](correlation_matrix.png)
+
+> Highest correlation is between **custom_rating** and **transfer_fee**.  
+> Age and injury show weak negative correlation with value.
+
+---
+
+##  Hypothesis Testing
+
+### 1. Do injured players have lower transfer value?
+
+- **Test**: Mann-Whitney U  
+- **Result**: p = 0.048 → **Reject H₀**  
+- Players with injuries are significantly undervalued
+
+---
+
+### 2. Does age significantly affect player value?
+
+- **Test**: One-sided t-test  
+- **Result**: p = 0.09 → **Fail to reject H₀**  
+- Younger players are not significantly more valuable in this dataset
+
+---
+
+##  Machine Learning
+
+### Goal: Predict Transfer Fee from Player Features
+
+- Model: Linear Regression
+- Features: `custom_rating`, `age`, `position` (one-hot encoded)
+- Performance:
+  - **R² Score**: 0.032
+  - **RMSE**: €6.59M
+
+> Low performance due to missing club, contract, and performance history
+
+---
+
+##  Limitations
+
+- Missing detailed club data (e.g., club prestige, budget)
+- No match stats (e.g., goals, assists) included in final model
+- Only players with both FIFA rating + transfer fee included
+
+---
+
+##  Future Work
+
+- Include more detailed performance metrics
+- Add club prestige & UEFA coefficients
+- Try non-linear models (XGBoost, Random Forest)
+- Build valuation tool to detect overvalued players
+
+---
+
+##  Deliverables
+
+- [x] `README.md` with project overview  
+- [x] Visuals: transfer value vs rating, age, injury  
+- [x] Hypothesis testing summary  
+- [x] Jupyter notebook with code and EDA  
+- [ ] Final model and prediction dashboard (optional)
