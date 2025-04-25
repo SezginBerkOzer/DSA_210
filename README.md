@@ -33,7 +33,7 @@ This project investigates how **player performance** and **age** impact the **tr
 
 ### 1. Performance Rating vs Transfer Fee
 
-![Performance vs Transfer Fee](images/performance_vs_transfer_fee.png)
+![Performance vs Transfer Fee](performance_vs_transfer_fee.png)
 
 > Strong positive relationship: higher FIFA custom rating tends to increase market value.
 
