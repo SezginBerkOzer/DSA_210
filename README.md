@@ -76,20 +76,6 @@ This project investigates how **player rating** and **age** impact the **transfe
 
 ---
 
-## 🤖 Machine Learning
-
-### Goal: Predict Transfer Fee
-
-- Features: `custom_rating`, `age`
-- Model: Linear Regression
-- Performance:
-  - **R² Score**: 0.28
-  - **RMSE**: €4.76M
-
-> Rating is the strongest predictor in this simple model
-
----
-
 ##  Limitations
 
 - No match-level performance stats (goals, assists) included  
