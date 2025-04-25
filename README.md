@@ -8,13 +8,13 @@
 
 ###  Project Objective
 
-This project investigates how **player performance** and **age** impact the **transfer market value** of professional football players. Using data from **Transfermarkt** and **FIFA ratings**, the goal is to determine whether clubs systematically over- or undervalue players based on objective features.
+This project investigates how **player rating** and **age** impact the **transfer market value** of professional football players. Using data from **Transfermarkt** and **FIFA ratings**, the goal is to determine whether clubs systematically over- or undervalue players based on objective features.
 
 ---
 
 ##  Hypotheses
 
-1.  Higher player performance → higher transfer market value  
+1.  Higher player rating → higher transfer market value  
 2.  Younger players → higher transfer market value
 
 ---
@@ -31,9 +31,9 @@ This project investigates how **player performance** and **age** impact the **tr
 
 ##  Exploratory Data Analysis (EDA)
 
-### 1. Performance Rating vs Transfer Fee
+### 1. Player Rating vs Transfer Fee
 
-![Performance vs Transfer Fee](performance_vs_transfer_fee.png)
+![Performance vs Transfer Fee](rating_vs_transfer_fee.png)
 
 > Strong positive relationship: higher FIFA custom rating tends to increase market value.
 
@@ -61,8 +61,8 @@ This project investigates how **player performance** and **age** impact the **tr
 ### 1. Does higher rating lead to higher transfer fee?
 
 - **Test**: One-sided t-test  
-- **H₀**: No difference in fees between high/low performers  
-- **H₁**: High performers get higher fees  
+- **H₀**: No difference in fees between high/low ratings  
+- **H₁**: High ratings get higher fees  
 - **Result**: p = 0.019 → Reject H₀ 
 
 ---
@@ -90,7 +90,7 @@ This project investigates how **player performance** and **age** impact the **tr
 
 ---
 
-## ⚠ Limitations
+##  Limitations
 
 - No match-level performance stats (goals, assists) included  
 - Only players with both rating & transfer fee are used  
