@@ -100,3 +100,69 @@ This project investigates how **player rating** and **age** impact the **transfe
 - [x] Hypothesis testing summary  
 - [x] Jupyter notebook with code and EDA  
 - [ ] Final model visualization and dashboard (optional)
+
+# Machine Learning: Predicting Transfer Fee using Random Forest
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+
+# Load merged dataset (should already contain custom_rating, age, transfer_fee)
+df = pd.read_csv("final_dataset.csv")  # you should replace this with your merged dataframe file
+
+# Drop missing values (if any)
+df = df.dropna(subset=["custom_rating", "age", "transfer_fee"])
+
+# Optional: log-transform transfer fee to reduce skewness
+df["log_fee"] = np.log1p(df["transfer_fee"])
+
+# Features and target
+X = df[["custom_rating", "age"]]
+y = df["log_fee"]
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Model
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Prediction
+y_pred = model.predict(X_test)
+
+# Inverse log transform for interpretability
+y_test_original = np.expm1(y_test)
+y_pred_original = np.expm1(y_pred)
+
+# Evaluation metrics
+mae = mean_absolute_error(y_test_original, y_pred_original)
+rmse = mean_squared_error(y_test_original, y_pred_original, squared=False)
+r2 = r2_score(y_test_original, y_pred_original)
+
+print(f"MAE: {mae:.2f}")
+print(f"RMSE: {rmse:.2f}")
+print(f"R²: {r2:.2f}")
+
+# Scatter plot: Actual vs Predicted
+plt.figure(figsize=(8,6))
+plt.scatter(y_test_original, y_pred_original, alpha=0.6)
+plt.plot([y_test_original.min(), y_test_original.max()], 
+         [y_test_original.min(), y_test_original.max()], color='red', linestyle='--')
+plt.xlabel("Actual Transfer Fee")
+plt.ylabel("Predicted Transfer Fee")
+plt.title("Actual vs Predicted Transfer Fee")
+plt.grid(True)
+plt.show()
+
+# Feature Importance
+importances = model.feature_importances_
+features = X.columns
+
+plt.figure(figsize=(6,4))
+plt.bar(features, importances)
+plt.title("Feature Importance")
+plt.ylabel("Importance Score")
+plt.show()
+
