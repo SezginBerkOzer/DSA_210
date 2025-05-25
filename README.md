@@ -4,12 +4,12 @@
 
 ---
 
-## 🔍 Project Objective  
+##  Project Objective  
 This project investigates how **player rating** and **age** affect the **transfer market value** of professional football players. Using real-world data from **Transfermarkt** and **FIFA ratings**, the goal is to explore whether clubs systematically over- or undervalue players based on these features.
 
 ---
 
-## 📌 Hypotheses
+##  Hypotheses
 
 1. **Higher player rating → higher transfer fee**  
 2. **Younger players → higher transfer fee**
@@ -18,7 +18,7 @@ These hypotheses will be tested using both **statistical hypothesis testing** an
 
 ---
 
-## 📁 Data Sources
+##  Data Sources
 
 | Source            | Description                                 |
 |-------------------|---------------------------------------------|
@@ -30,7 +30,7 @@ After cleaning and merging datasets by `player_id`, we retained only players wit
 
 ---
 
-## 🧪 Exploratory Data Analysis (EDA)
+##  Exploratory Data Analysis (EDA)
 
 ### 1. Player Rating vs Transfer Fee  
 There is a clear positive trend: higher-rated players generally have higher transfer fees.
@@ -53,13 +53,13 @@ Custom rating shows the strongest correlation with transfer value. Age is negati
 
 ---
 
-## 📊 Hypothesis Testing
+##  Hypothesis Testing
 
 ### H₁: Do higher ratings lead to higher transfer value?
 
 - **Test**: One-sided t-test  
 - **Result**: p = 0.019  
-- ✅ **Reject H₀** → High-rated players have statistically higher fees
+-  **Reject H₀** → High-rated players have statistically higher fees
 
 ---
 
@@ -67,31 +67,31 @@ Custom rating shows the strongest correlation with transfer value. Age is negati
 
 - **Test**: One-sided t-test  
 - **Result**: p = 0.042  
-- ✅ **Reject H₀** → Younger players are more expensive on average
+-  **Reject H₀** → Younger players are more expensive on average
 
 ---
 
-## 🤖 Machine Learning Techniques
+##  Machine Learning Techniques
 
-### 🎯 Objective  
+###  Objective  
 Predict a player’s **transfer fee** using **custom rating** and **age**.
 
-### 🧠 Models Used  
+###  Models Used  
 - `LinearRegression` (baseline)  
 - `RandomForestRegressor` (non-linear)
 
-### 📈 Results
+###  Results
 
 | Model                  | R² Score | MAE (M €) | RMSE (M €) |
 |------------------------|----------|-----------|------------|
 | Linear Regression      | 0.56     | 1.2       | 2.1        |
 | Random Forest Regressor| 0.68     | 0.95      | 1.8        |
 
-> ✅ Random Forest captured more variation in transfer value and outperformed the linear baseline.
+>  Random Forest captured more variation in transfer value and outperformed the linear baseline.
 
 ---
 
-### 📊 Actual vs Predicted (Random Forest)
+###  Actual vs Predicted (Random Forest)
 
 This scatter plot shows how closely model predictions align with actual transfer fees.
 
@@ -99,7 +99,7 @@ This scatter plot shows how closely model predictions align with actual transfer
 
 ---
 
-## 📌 Findings
+##  Findings
 
 - **Custom Rating is the most influential predictor** of transfer value  
 - **Younger players are more expensive**, especially under age 25  
@@ -107,7 +107,7 @@ This scatter plot shows how closely model predictions align with actual transfer
 
 ---
 
-## ⚠️ Limitations
+## ⚠ Limitations
 
 - Does not include **match performance** (goals, assists, etc.)  
 - Positional or club-level effects are not considered  
@@ -115,7 +115,7 @@ This scatter plot shows how closely model predictions align with actual transfer
 
 ---
 
-## 🔮 Future Work
+##  Future Work
 
 - Add more features: **position**, **club prestige**, **league level**  
 - Use **non-linear models** like XGBoost  
@@ -124,7 +124,7 @@ This scatter plot shows how closely model predictions align with actual transfer
 
 ---
 
-## 📂 Files in This Repository
+##  Files in This Repository
 
 | File / Folder              | Description                           |
 |----------------------------|---------------------------------------|
@@ -139,7 +139,7 @@ This scatter plot shows how closely model predictions align with actual transfer
 
 ---
 
-## ✅ Requirements
+##  Requirements
 
 ```txt
 pandas
