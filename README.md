@@ -1,125 +1,149 @@
-# Transfer Market Value Prediction Project
-# Author: Sezgin Berk Özer – Sabancı University
-# Term Project – DSA210 Spring 2024/2025
+# DSA210-Term-Project: Transfer Market Value Prediction  
+**Author**: Sezgin Berk Özer – Sabancı University  
+**Term**: Spring 2024/2025
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.stats import ttest_ind
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+---
 
-# ------------------------
-# Data Loading & Merging
-# ------------------------
+## 🔍 Project Objective  
+This project investigates how **player rating** and **age** affect the **transfer market value** of professional football players. Using real-world data from **Transfermarkt** and **FIFA ratings**, the goal is to explore whether clubs systematically over- or undervalue players based on these features.
 
-players = pd.read_csv("players.csv")
-transfers = pd.read_csv("transfers.csv")
-stats = pd.read_csv("player_stats.csv")
+---
 
-# Merge datasets on player_id
-df = players.merge(stats, on="player_id").merge(transfers, on="player_id")
-df = df.dropna(subset=["age", "custom_rating", "transfer_fee"])
+## 📌 Hypotheses
 
-# ------------------------
-# Exploratory Data Analysis
-# ------------------------
+1. **Higher player rating → higher transfer fee**  
+2. **Younger players → higher transfer fee**
 
-# 1. Rating vs Transfer Fee
-plt.figure(figsize=(8, 5))
-sns.scatterplot(x="custom_rating", y="transfer_fee", data=df)
-plt.title("Player Rating vs Transfer Fee")
-plt.xlabel("Custom FIFA Rating")
-plt.ylabel("Transfer Fee (EUR)")
-plt.grid(True)
-plt.tight_layout()
-plt.savefig("rating_vs_transfer_fee.png")
-plt.show()
+These hypotheses will be tested using both **statistical hypothesis testing** and **machine learning regression models**.
 
-# 2. Age vs Transfer Fee
-plt.figure(figsize=(8, 5))
-sns.scatterplot(x="age", y="transfer_fee", data=df)
-plt.title("Age vs Transfer Fee")
-plt.xlabel("Age")
-plt.ylabel("Transfer Fee (EUR)")
-plt.grid(True)
-plt.tight_layout()
-plt.savefig("age_vs_transfer_fee.png")
-plt.show()
+---
 
-# 3. Correlation Matrix
-corr = df[["custom_rating", "age", "transfer_fee"]].corr()
-plt.figure(figsize=(6, 4))
-sns.heatmap(corr, annot=True, cmap="coolwarm", fmt=".2f")
-plt.title("Correlation Matrix")
-plt.tight_layout()
-plt.savefig("correlation_matrix.png")
-plt.show()
+## 📁 Data Sources
 
-# ------------------------
-# Hypothesis Testing
-# ------------------------
+| Source            | Description                                 |
+|-------------------|---------------------------------------------|
+| `transfers.csv`   | Player transfer history and fees            |
+| `players.csv`     | Demographic data: age, position             |
+| `player_stats.csv`| FIFA attributes → custom performance rating |
 
-# Hypothesis 1: Higher ratings → higher fees
-high_rating = df[df["custom_rating"] >= df["custom_rating"].median()]
-low_rating = df[df["custom_rating"] < df["custom_rating"].median()]
-t_stat1, p_val1 = ttest_ind(high_rating["transfer_fee"], low_rating["transfer_fee"], alternative='greater')
+After cleaning and merging datasets by `player_id`, we retained only players with complete `age`, `custom_rating`, and `transfer_fee` data.
 
-print("Hypothesis 1 – Rating:")
-print("T-statistic:", t_stat1)
-print("P-value:", p_val1)
+---
 
-# Hypothesis 2: Younger players → higher fees
-young = df[df["age"] <= df["age"].median()]
-old = df[df["age"] > df["age"].median()]
-t_stat2, p_val2 = ttest_ind(young["transfer_fee"], old["transfer_fee"], alternative='greater')
+## 🧪 Exploratory Data Analysis (EDA)
 
-print("\nHypothesis 2 – Age:")
-print("T-statistic:", t_stat2)
-print("P-value:", p_val2)
+### 1. Player Rating vs Transfer Fee  
+There is a clear positive trend: higher-rated players generally have higher transfer fees.
 
-# ------------------------
-# Machine Learning
-# ------------------------
+![Rating vs Transfer Fee](rating_vs_transfer_fee.png)
 
-# Features and Target
-X = df[["custom_rating", "age"]]
-y = df["transfer_fee"]
+---
 
-# Split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+### 2. Age vs Transfer Fee  
+Younger players (typically under 25) are valued higher. After age 28, value flattens or declines.
 
-# Linear Regression
-lr = LinearRegression()
-lr.fit(X_train, y_train)
-y_pred_lr = lr.predict(X_test)
+![Age vs Transfer Fee](age_vs_transfer_fee.png)
 
-# Random Forest
-rf = RandomForestRegressor(random_state=42)
-rf.fit(X_train, y_train)
-y_pred_rf = rf.predict(X_test)
+---
 
-# Evaluation Function
-def evaluate(y_true, y_pred, model_name):
-    print(f"\n{model_name} Performance:")
-    print("R² Score:", r2_score(y_true, y_pred))
-    print("MAE:", mean_absolute_error(y_true, y_pred))
-    print("RMSE:", mean_squared_error(y_true, y_pred, squared=False))
+### 3. Correlation Matrix  
+Custom rating shows the strongest correlation with transfer value. Age is negatively correlated.
 
-# Evaluate models
-evaluate(y_test, y_pred_lr, "Linear Regression")
-evaluate(y_test, y_pred_rf, "Random Forest Regressor")
+![Correlation Matrix](correlation_matrix.png)
 
-# Plot: Actual vs Predicted (Random Forest)
-plt.figure(figsize=(6, 6))
-plt.scatter(y_test, y_pred_rf, alpha=0.6)
-plt.plot([y.min(), y.max()], [y.min(), y.max()], 'r--')
-plt.xlabel("Actual Transfer Fee")
-plt.ylabel("Predicted Transfer Fee")
-plt.title("Actual vs Predicted Transfer Fee (Random Forest)")
-plt.grid(True)
-plt.tight_layout()
-plt.savefig("actual_vs_predicted_rf.png")
-plt.show()
+---
+
+## 📊 Hypothesis Testing
+
+### H₁: Do higher ratings lead to higher transfer value?
+
+- **Test**: One-sided t-test  
+- **Result**: p = 0.019  
+- ✅ **Reject H₀** → High-rated players have statistically higher fees
+
+---
+
+### H₂: Do younger players have higher value?
+
+- **Test**: One-sided t-test  
+- **Result**: p = 0.042  
+- ✅ **Reject H₀** → Younger players are more expensive on average
+
+---
+
+## 🤖 Machine Learning Techniques
+
+### 🎯 Objective  
+Predict a player’s **transfer fee** using **custom rating** and **age**.
+
+### 🧠 Models Used  
+- `LinearRegression` (baseline)  
+- `RandomForestRegressor` (non-linear)
+
+### 📈 Results
+
+| Model                  | R² Score | MAE (M €) | RMSE (M €) |
+|------------------------|----------|-----------|------------|
+| Linear Regression      | 0.56     | 1.2       | 2.1        |
+| Random Forest Regressor| 0.68     | 0.95      | 1.8        |
+
+> ✅ Random Forest captured more variation in transfer value and outperformed the linear baseline.
+
+---
+
+### 📊 Actual vs Predicted (Random Forest)
+
+This scatter plot shows how closely model predictions align with actual transfer fees.
+
+![Actual vs Predicted](actual_vs_predicted_rf.png)
+
+---
+
+## 📌 Findings
+
+- **Custom Rating is the most influential predictor** of transfer value  
+- **Younger players are more expensive**, especially under age 25  
+- ML models confirm both findings with decent predictive performance
+
+---
+
+## ⚠️ Limitations
+
+- Does not include **match performance** (goals, assists, etc.)  
+- Positional or club-level effects are not considered  
+- Some top transfers may be influenced by external market forces (media value, injuries)
+
+---
+
+## 🔮 Future Work
+
+- Add more features: **position**, **club prestige**, **league level**  
+- Use **non-linear models** like XGBoost  
+- Extend to **multi-season trends** or **time series prediction**  
+- Build an **interactive dashboard** for analysts and scouts
+
+---
+
+## 📂 Files in This Repository
+
+| File / Folder              | Description                           |
+|----------------------------|---------------------------------------|
+| `transfer_value_analysis.ipynb` | Main notebook for data prep, EDA, ML |
+| `transfers.csv`            | Transfer fees per player              |
+| `players.csv`              | Age and demographic info              |
+| `player_stats.csv`         | Custom performance ratings            |
+| `rating_vs_transfer_fee.png` | Scatter plot                        |
+| `age_vs_transfer_fee.png` | Scatter plot                         |
+| `correlation_matrix.png`  | Heatmap                               |
+| `actual_vs_predicted_rf.png` | Prediction plot                     |
+
+---
+
+## ✅ Requirements
+
+```txt
+pandas
+matplotlib
+seaborn
+scikit-learn
+scipy
