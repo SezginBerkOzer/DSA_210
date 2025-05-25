@@ -95,7 +95,7 @@ Predict a player’s **transfer fee** using **custom rating** and **age**.
 
 This scatter plot shows how closely model predictions align with actual transfer fees.
 
-![Actual vs Predicted](actual_vs_predicted_rf.png)
+![Actual vs Predicted](ActvsPred.png)
 
 ---
 
